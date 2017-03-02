@@ -1,20 +1,35 @@
+import datetime as dt
 import unittest
+import QSTK.qstkutil.DataAccess as da
+import QSTK.qstkutil.qsdateutil as du
 
 class Result:
     def __init__(self):
-        self.volatility = 0
+        self.average_daily_return = 0
+
+def get_timestamps_for_market_close(args):
+    start = dt.datetime(args.startyear, args.startmonth, args.startday)
+    end = dt.datetime(args.endyear, args.endmonth, args.endday)
+    market_close = dt.timedelta(hours=16)
+    return du.getNYSEdays(start, end, market_close)
+
+def foo(timestamps, symbols):
+    database = da.DataAccess('Yahoo')
+    fields = ['open', 'high', 'low', 'close', 'volume', 'actual_close']
+    return dict(zip(fields, database.get_data(timestamps, symbols, fields)))
 
 def simulate(args):
+    print foo(get_timestamps_for_market_close(args), args.symbols)
     return Result()
 
 class Args:
     def __init__(self):
-        self.startyear = str()
-        self.startmonth = str()
-        self.startday = str()
-        self.endyear = str()
-        self.endmonth = str()
-        self.endday = str()
+        self.startyear = 1
+        self.startmonth = 1
+        self.startday = 1
+        self.endyear = 1
+        self.endmonth = 1
+        self.endday = 1
         self.symbols = []
 
 class Tests(unittest.TestCase):
@@ -28,8 +43,8 @@ class Tests(unittest.TestCase):
         self.args.endday = 31
         self.args.symbols = ["AAPL", "GLD", "GOOG", "XOM"]
 
-    def test_volatility(self):
-        self.assertEquals(0.0101467067654, simulate(self.args).volatility)
+    def test_average_daily_return(self):
+        self.assertEquals(0.000657261102001, simulate(self.args).average_daily_return)
 
 if __name__ == '__main__':
     unittest.main()
