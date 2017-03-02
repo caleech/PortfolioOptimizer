@@ -13,13 +13,15 @@ def get_timestamps_for_market_close(args):
     market_close = dt.timedelta(hours=16)
     return du.getNYSEdays(start, end, market_close)
 
-def foo(timestamps, symbols):
+def get_market_data(fields, timestamps, symbols):
     database = da.DataAccess('Yahoo')
-    fields = ['open', 'high', 'low', 'close', 'volume', 'actual_close']
     return dict(zip(fields, database.get_data(timestamps, symbols, fields)))
 
 def simulate(args):
-    print foo(get_timestamps_for_market_close(args), args.symbols)
+    fields = ['open', 'high', 'low', 'close', 'volume', 'actual_close']
+    print get_market_data(fields,
+                          get_timestamps_for_market_close(args),
+                          args.symbols)
     return Result()
 
 class Args:
