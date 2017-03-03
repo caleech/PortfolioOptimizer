@@ -64,7 +64,9 @@ class Tests(unittest.TestCase):
         self.args.symbols = ["AAPL", "GLD", "GOOG", "XOM"]
 
     def test_average_daily_return(self):
-        self.assertAlmostEqual(0.000657261102001, simulate(self.args).average_daily_return, places=4)
+        self.assertAlmostEqual(0.000657261102001,
+                               simulate(self.args).average_daily_return,
+                               places=4)
 
 if __name__ == '__main__':
     unittest.main()
