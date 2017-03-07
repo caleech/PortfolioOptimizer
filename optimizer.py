@@ -8,6 +8,7 @@ import unittest
 class Result:
     def __init__(self):
         self.average_daily_return = 0
+        self.cumulative_daily_value = 0
 
 def get_timestamps_for_market_close(args):
     start = dt.datetime(args.startyear, args.startmonth, args.startday)
@@ -35,16 +36,23 @@ def check_args(args):
     if np.sum(args.allocations) != 1.0:
         raise ValueError("Allocations must sum to 1.0")
 
+def apply_allocations(prices, allocations):
+    return prices * allocations
+
 def simulate(args):
     check_args(args)
-    prices = normalize(
-        get_close_prices(
-            get_timestamps_for_market_close(args), args.symbols))
+    prices = apply_allocations(
+        normalize(
+            get_close_prices(
+                get_timestamps_for_market_close(args), args.symbols)),
+        args.allocations)
 
     out = Result()
-    prices_out = prices.copy()
-    tsu.returnize0(prices_out)
-    out.average_daily_return = np.average(prices_out)
+    row_wise_sum = prices.copy().sum(axis=1).copy()
+    out.cumulative_daily_value = np.sum(tsu.returnize0(row_wise_sum)) + 1
+
+    # tsu.returnize0(prices_out)
+    # out.average_daily_return = np.average(prices_out)
 
     return out
 
@@ -76,6 +84,12 @@ class Tests(unittest.TestCase):
         self.assertAlmostEqual(0.000657261102001,
                                simulate(self.args).average_daily_return,
                                places=4)
+
+    def test_cumulative_daily_value(self):
+        self.assertAlmostEqual(1.16487261965,
+                               simulate(self.args).cumulative_daily_value,
+                               places=2)
+        
 
     def test_allocations_and_symbol_mismatch(self):
         def fn():
