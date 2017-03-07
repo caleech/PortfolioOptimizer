@@ -32,6 +32,9 @@ def normalize(prices):
 def check_args(args):
     if len(args.symbols) != len(args.allocations):
         raise ValueError("Symbols don't match allocations")
+    if np.sum(args.allocations) != 1.0:
+        raise ValueError("Allocations must sum to 1.0")
+
     
 
 def simulate(args):
@@ -82,6 +85,14 @@ class Tests(unittest.TestCase):
             simulate(self.args)
 
         self.assertRaises(ValueError, fn)
+
+    def test_allocations_must_sum_to_one(self):
+        def fn():
+            self.args.allocations = [1, 1, 1, 1]
+            simulate(self.args)
+
+        self.assertRaises(ValueError, fn)
+
 
 if __name__ == '__main__':
     unittest.main()
