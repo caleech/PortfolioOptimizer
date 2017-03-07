@@ -35,8 +35,6 @@ def check_args(args):
     if np.sum(args.allocations) != 1.0:
         raise ValueError("Allocations must sum to 1.0")
 
-    
-
 def simulate(args):
     check_args(args)
     prices = normalize(
