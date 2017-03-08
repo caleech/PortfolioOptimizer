@@ -50,9 +50,7 @@ def simulate(args):
     out = Result()
     row_wise_sum = prices.copy().sum(axis=1).copy()
     out.cumulative_daily_value = np.sum(tsu.returnize0(row_wise_sum)) + 1
-
-    # tsu.returnize0(prices_out)
-    # out.average_daily_return = np.average(prices_out)
+    out.average_daily_return = np.average(row_wise_sum)
 
     return out
 
@@ -83,7 +81,7 @@ class Tests(unittest.TestCase):
     def test_average_daily_return(self):
         self.assertAlmostEqual(0.000657261102001,
                                simulate(self.args).average_daily_return,
-                               places=4)
+                               places=10)
 
     def test_cumulative_daily_value(self):
         self.assertAlmostEqual(1.16487261965,
