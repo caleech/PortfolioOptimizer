@@ -62,9 +62,9 @@ def simulate(args):
 
 def get_possible_allocations(args):
     if not args.symbols:
-        return []
+        return [[]]
 
-    return [1]
+    return [[1]]
 
 class Args:
     def __init__(self):
@@ -125,12 +125,17 @@ class Tests(unittest.TestCase):
 
     def test_empty_possible_allocations(self):
         self.args.symbols = []
-        self.assertEqual([], get_possible_allocations(self.args))
+        self.assertEqual([[]], get_possible_allocations(self.args))
 
     def test_get_possible_allocations_for_single_symbol(self):
         self.args.symbols = ["GOOG"]
-        self.assertEqual([1], get_possible_allocations(self.args))
+        self.assertEqual([[1]], get_possible_allocations(self.args))
 
+    def test_get_possible_allocations_for_two_symbols(self):
+        self.args.symbols = ["GOOG", "AAPL"]
+        items = get_possible_allocations(self.args)
+        self.assertEqual([1.0, 0.0], items[0])
+        self.assertEqual([0.9, 0.1], items[1])
 
 if __name__ == '__main__':
     unittest.main()
