@@ -11,6 +11,10 @@ class Result:
         self.cumulative_daily_value = 0
         self.volatility = 0
 
+    def sharpe_ratio(self):
+        trading_days = 250
+        return (self.average_daily_return/self.volatility)*np.sqrt(trading_days)
+
 def get_timestamps_for_market_close(args):
     start = dt.datetime(args.startyear, args.startmonth, args.startday)
     end = dt.datetime(args.endyear, args.endmonth, args.endday)
@@ -56,7 +60,6 @@ def simulate(args):
 
     return out
 
-
 class Args:
     def __init__(self):
         self.startyear = 1
@@ -94,6 +97,11 @@ class Tests(unittest.TestCase):
         self.assertAlmostEqual(0.0101467067654,
                                simulate(self.args).volatility,
                                places=7)
+
+    def test_sharpe(self):
+        self.assertAlmostEqual(1.02828403099,
+                               simulate(self.args).sharpe_ratio(),
+                               places=2)
 
     def test_allocations_and_symbol_mismatch(self):
         def fn():
