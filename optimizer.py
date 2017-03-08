@@ -9,6 +9,7 @@ class Result:
     def __init__(self):
         self.average_daily_return = 0
         self.cumulative_daily_value = 0
+        self.volatility = 0
 
 def get_timestamps_for_market_close(args):
     start = dt.datetime(args.startyear, args.startmonth, args.startday)
@@ -51,6 +52,7 @@ def simulate(args):
     row_wise_sum = prices.copy().sum(axis=1).copy()
     out.cumulative_daily_value = np.sum(tsu.returnize0(row_wise_sum)) + 1
     out.average_daily_return = np.average(row_wise_sum)
+    out.volatility = np.std(row_wise_sum)
 
     return out
 
@@ -87,7 +89,11 @@ class Tests(unittest.TestCase):
         self.assertAlmostEqual(1.16487261965,
                                simulate(self.args).cumulative_daily_value,
                                places=2)
-        
+
+    def test_volatility(self):
+        self.assertAlmostEqual(0.0101467067654,
+                               simulate(self.args).volatility,
+                               places=7)
 
     def test_allocations_and_symbol_mismatch(self):
         def fn():
