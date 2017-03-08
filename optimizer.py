@@ -61,7 +61,7 @@ def simulate(args):
     return out
 
 def get_possible_allocations(args):
-    return []
+    return [1]
 
 class Args:
     def __init__(self):
