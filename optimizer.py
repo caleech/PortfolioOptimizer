@@ -60,6 +60,9 @@ def simulate(args):
 
     return out
 
+def get_possible_allocations(args):
+    return []
+
 class Args:
     def __init__(self):
         self.startyear = 1
@@ -116,6 +119,10 @@ class Tests(unittest.TestCase):
             simulate(self.args)
 
         self.assertRaises(ValueError, fn)
+
+    def get_possible_allocations_for_single_symbol(self):
+        self.args.symbols = ["GOOG"]
+        self.assertEqual([1], get_possible_allocations(self.args))
 
 
 if __name__ == '__main__':
