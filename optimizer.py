@@ -61,12 +61,13 @@ def simulate(args):
     return out
 
 def get_possible_allocations(args):
-    out = []
     if not args.symbols:
-        out.append([])
-    elif len(args.symbols) == 1:
-        out.append([1])
+        return [[]]
 
+    out = []
+    a = np.zeros(len(args.symbols))
+    a[0] = 1
+    out.append(a.tolist())
     return out
 
 class Args:
