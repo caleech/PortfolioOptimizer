@@ -120,7 +120,7 @@ class Tests(unittest.TestCase):
 
         self.assertRaises(ValueError, fn)
 
-    def get_possible_allocations_for_single_symbol(self):
+    def test_get_possible_allocations_for_single_symbol(self):
         self.args.symbols = ["GOOG"]
         self.assertEqual([1], get_possible_allocations(self.args))
 
