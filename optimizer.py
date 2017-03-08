@@ -61,6 +61,9 @@ def simulate(args):
     return out
 
 def get_possible_allocations(args):
+    if not args.symbols:
+        return []
+
     return [1]
 
 class Args:
@@ -119,6 +122,10 @@ class Tests(unittest.TestCase):
             simulate(self.args)
 
         self.assertRaises(ValueError, fn)
+
+    def test_empty_possible_allocations(self):
+        self.args.symbols = []
+        self.assertEqual([], get_possible_allocations(self.args))
 
     def test_get_possible_allocations_for_single_symbol(self):
         self.args.symbols = ["GOOG"]
