@@ -65,7 +65,7 @@ def get_possible_allocations(args):
     if size == 0:
         return [[]]
 
-    a = np.arange(0, 1, .1)
+    a = np.arange(0, 1.1, .1)
     return [i for i in np.dstack(np.meshgrid(*[a for j in range(size)])).reshape(-1, size)
             if np.sum(i) == 1.0]
 
@@ -137,8 +137,9 @@ class Tests(unittest.TestCase):
     def test_get_possible_allocations_for_two_symbols(self):
         self.args.symbols = ["GOOG", "AAPL"]
         items = get_possible_allocations(self.args)
-        self.assertEqual([1.0, 0.0], items[0])
-        self.assertEqual([0.9, 0.1], items[1])
+        print items[0].tolist()
+        self.assertEqual([1.0, 0.0], items[0].tolist())
+        self.assertEqual([0.9, 0.1], items[1].tolist())
 
 if __name__ == '__main__':
     unittest.main()
