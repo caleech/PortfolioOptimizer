@@ -60,15 +60,14 @@ def simulate(args):
 
     return out
 
-def get_possible_allocations(args):
-    if not args.symbols:
+def get_possible_allocations(args):    
+    size = len(args.symbols)
+    if size == 0:
         return [[]]
 
-    out = []
-    a = np.zeros(len(args.symbols))
-    a[0] = 1
-    out.append(a.tolist())
-    return out
+    a = np.arange(0, 1, .1)
+    return [i for i in np.dstack(np.meshgrid(*[a for j in range(size)])).reshape(-1, size)
+            if np.sum(i) == 1.0]
 
 class Args:
     def __init__(self):
