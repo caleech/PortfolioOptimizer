@@ -60,8 +60,8 @@ def simulate(args):
 
     return out
 
-def get_possible_allocations(args):    
-    size = len(args.symbols)
+def get_possible_allocations(symbols):
+    size = len(symbols)
     if size == 0:
         return [[]]
 
@@ -80,6 +80,38 @@ class Args:
         self.symbols = []
         self.allocations = []
 
+class Simulator:
+    def __init__(self, year, symbols):
+        self.year = year
+        self.symbols = symbols
+        self.current_max = Result()
+
+    def run(self):
+        for i in get_possible_allocations(self.symbols):
+            self._process_simulation(simulate(self._to_args(i)), i)
+
+        return self.current_max
+
+    def _process_simulation(self, simulation_result, allocations):
+        if simulation_result.sharpe_ratio <= self.current_max.sharpe_ratio:
+            return
+
+        self.current_max = simulation_result
+        self.current_max.allocations = allocations
+
+    def _to_args(self, allocations):
+        out = Args()
+        out.startyear = self.year
+        out.startmonth = 1
+        out.startday = 1
+        out.endyear = self.year
+        out.endmonth = 12
+        out.endday = 31
+        out.symbols = self.symbols
+        out.allocations = allocations
+
+        return out
+
 class Tests(unittest.TestCase):
     def setUp(self):
         self.args = Args()
@@ -91,6 +123,10 @@ class Tests(unittest.TestCase):
         self.args.endday = 31
         self.args.symbols = ["AAPL", "GLD", "GOOG", "XOM"]
         self.args.allocations = [0.4, 0.4, 0.0, 0.2]
+
+    def test_run_simulations(self):
+        result = Simulator(self.args.startyear, self.args.symbols).run()
+        self.assertEqual([0.4, 0.4, 0.0, 0.2], result.allocations.tolist())
 
     def test_average_daily_return(self):
         self.assertAlmostEqual(0.000657261102001,
@@ -128,15 +164,15 @@ class Tests(unittest.TestCase):
 
     def test_empty_possible_allocations(self):
         self.args.symbols = []
-        self.assertEqual([[]], get_possible_allocations(self.args))
+        self.assertEqual([[]], get_possible_allocations(self.args.symbols))
 
     def test_get_possible_allocations_for_single_symbol(self):
         self.args.symbols = ["GOOG"]
-        self.assertEqual([[1]], get_possible_allocations(self.args))
+        self.assertEqual([[1]], get_possible_allocations(self.args.symbols))
 
     def test_get_possible_allocations_for_two_symbols(self):
         self.args.symbols = ["GOOG", "AAPL"]
-        items = get_possible_allocations(self.args)
+        items = get_possible_allocations(self.args.symbols)
         self.assertEqual([1.0, 0.0], items[0].tolist())
         self.assertEqual([0.9, 0.1], items[1].tolist())
 
