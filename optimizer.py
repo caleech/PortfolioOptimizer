@@ -137,7 +137,6 @@ class Tests(unittest.TestCase):
     def test_get_possible_allocations_for_two_symbols(self):
         self.args.symbols = ["GOOG", "AAPL"]
         items = get_possible_allocations(self.args)
-        print items[0].tolist()
         self.assertEqual([1.0, 0.0], items[0].tolist())
         self.assertEqual([0.9, 0.1], items[1].tolist())
 
