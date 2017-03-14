@@ -133,7 +133,7 @@ class Tests(unittest.TestCase):
                                places=10)
 
     def test_cumulative_daily_value(self):
-        self.assertAlmostEqual(1.16487261965,
+        self.assertAlmostEqual(1.164,
                                simulate(self.args).cumulative_daily_value,
                                places=2)
 
