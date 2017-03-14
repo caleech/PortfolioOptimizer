@@ -2,6 +2,7 @@ import QSTK.qstkutil.DataAccess as da
 import QSTK.qstkutil.qsdateutil as du
 import QSTK.qstkutil.tsutil as tsu
 import datetime as dt
+import itertools
 import numpy as np
 import unittest
 
@@ -65,9 +66,7 @@ def get_possible_allocations(symbols):
     if size == 0:
         return [[]]
 
-    a = np.arange(0, 1.1, .1)
-    return [i for i in np.dstack(np.meshgrid(*[a for j in range(size)])).reshape(-1, size)
-            if np.sum(i) == 1.0]
+    return np.array([i for i in itertools.product(np.arange(0, 1.1, 0.1), repeat=size) if np.sum(i) == 1])
 
 class Args:
     def __init__(self):
@@ -126,7 +125,7 @@ class Tests(unittest.TestCase):
 
     def test_run_simulations(self):
         result = Simulator(self.args.startyear, self.args.symbols).run()
-        self.assertEqual([0.4, 0.4, 0.0, 0.2], result.allocations.tolist())
+        np.testing.assert_array_equal(np.array([0.4, 0.4, 0.0, 0.2]), result.allocations)
 
     def test_average_daily_return(self):
         self.assertAlmostEqual(0.000657261102001,
@@ -173,8 +172,8 @@ class Tests(unittest.TestCase):
     def test_get_possible_allocations_for_two_symbols(self):
         self.args.symbols = ["GOOG", "AAPL"]
         items = get_possible_allocations(self.args.symbols)
-        self.assertEqual([1.0, 0.0], items[0].tolist())
-        self.assertEqual([0.9, 0.1], items[1].tolist())
+        np.testing.assert_array_equal(np.array([0, 1]), items[0])
+        np.testing.assert_array_equal(np.array([0.1, 0.9]), items[1])
 
 if __name__ == '__main__':
     unittest.main()
