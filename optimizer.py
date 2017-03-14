@@ -63,9 +63,6 @@ def simulate(args):
 
 def get_possible_allocations(symbols):
     size = len(symbols)
-    if size == 0:
-        return [[]]
-
     return np.array([i for i in itertools.product(np.arange(0, 1.1, 0.1), repeat=size) if np.sum(i) == 1])
 
 class Args:
@@ -166,7 +163,8 @@ class Tests(unittest.TestCase):
 
     def test_empty_possible_allocations(self):
         self.args.symbols = []
-        self.assertEqual([[]], get_possible_allocations(self.args.symbols))
+        np.testing.assert_array_equal(
+            np.array([]), get_possible_allocations(self.args.symbols))
 
     def test_get_possible_allocations_for_single_symbol(self):
         self.args.symbols = ["GOOG"]
