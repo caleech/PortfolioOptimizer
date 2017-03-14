@@ -83,7 +83,7 @@ class Simulator:
     def __init__(self, year, symbols):
         self.year = year
         self.symbols = symbols
-        self.current_max = Result()
+        self.current_max = None
 
     def run(self):
         for i in get_possible_allocations(self.symbols):
@@ -92,10 +92,13 @@ class Simulator:
         return self.current_max
 
     def _process_simulation(self, simulation_result, allocations):
-        if simulation_result.sharpe_ratio <= self.current_max.sharpe_ratio:
-            return
+        is_new_max = (not self.current_max or
+                      simulation_result.sharpe_ratio() > self.current_max.sharpe_ratio())
+        if is_new_max:
+            self.set_max(simulation_result, allocations)
 
-        self.current_max = simulation_result
+    def set_max(self, result, allocations):
+        self.current_max = result
         self.current_max.allocations = allocations
 
     def _to_args(self, allocations):
