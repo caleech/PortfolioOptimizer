@@ -143,7 +143,7 @@ class Tests(unittest.TestCase):
                                places=7)
 
     def test_sharpe(self):
-        self.assertAlmostEqual(1.02828403099,
+        self.assertAlmostEqual(1.028,
                                simulate(self.args).sharpe_ratio(),
                                places=2)
 
